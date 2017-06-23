@@ -314,7 +314,7 @@ FADC500gui::FADC500gui()
 	fTEP->MoveResize(200,300,100,20);
 	fTEP->Connect("Selected(Int_t)", "FADC500gui", this, "SetTEP(Int_t)");
 
-	lTEPO = new TGLabel(fCompositeFrame1, "Peak Sum OR Trigger");
+	lTEPO = new TGLabel(fCompositeFrame1, "TDC Trigger");
 	lTEPO -> SetTextJustify(kTextLeft);
 	lTEPO -> SetMargins(0, 0, 0, 0);
 	lTEPO -> SetWrapLength(-1);
@@ -322,7 +322,7 @@ FADC500gui::FADC500gui()
 	lTEPO -> MoveResize(20,330,170,20);
 
 	fTEPO = new TGComboBox(fCompositeFrame1,-1,kHorizontalFrame | kSunkenFrame | kOwnBackground);
-	fTEPO->SetName("Peak Sum OR Trigger");
+	fTEPO->SetName("TDC Trigger");
 	fTEPO->AddEntry("Yes",0);
 	fTEPO->AddEntry("No",1);
 	fTEPO->Resize(100,20);
@@ -914,7 +914,7 @@ void FADC500gui::SaveSetting()
 	savesetting << fset.ten << endl;
 	savesetting << fset.tew << endl;
 	savesetting << fset.tep << endl;
-	savesetting << fset.tep2 << endl;
+	savesetting << fset.tet << endl;
 	savesetting << frun.flush << endl;
 	savesetting << fset.ten_self << endl;
 	savesetting << fset.ten_pedestal << endl;
@@ -981,7 +981,7 @@ void FADC500gui::OpenSetting()
     savesetting >> fset.ten;
     savesetting >> fset.tew;
     savesetting >> fset.tep;
-    savesetting >> fset.tep2;
+    savesetting >> fset.tet;
     savesetting >> frun.flush;
     savesetting >> fset.ten_self;
     savesetting >> fset.ten_pedestal;
@@ -1020,7 +1020,7 @@ void FADC500gui::OpenSetting()
 	cout << "Pulse count trigger : " << fset.ten << endl;
 	cout << "Pulse width trigger : " << fset.tew << endl;
 	cout << "Peak sum trigger : " << fset.tep << endl;
-	cout << "Peak sum OR trigger : " << fset.tep2 << endl;
+	cout << "TDC trigger : " << fset.tet << endl;
 	cout << "Take Residual data : " << frun.flush << endl;
 
 	for (int i = 0; i < 6; i++)
@@ -1072,8 +1072,8 @@ void FADC500gui::SetParGUI()
 	if (fset.tep == 1) fTEP -> Select(0);
 	if (fset.tep == 0) fTEP -> Select(1);
 	
-	if (fset.tep2 == 1) fTEPO -> Select(0);
-	if (fset.tep2 == 0) fTEPO -> Select(1);
+	if (fset.tet == 1) fTEPO -> Select(0);
+	if (fset.tet == 0) fTEPO -> Select(1);
 
 	if (frun.flush == 1) fFLUSH -> Select(0);
 	if (frun.flush == 0) fFLUSH -> Select(1);
@@ -1541,13 +1541,13 @@ void FADC500gui::SetTEPO(int value)
 {
 	if (value == 0)
 	{
-		fset.tep2 = 1;
-		cout << "***** Peak Sum OR Trigger : " << "Able" << " *****" << endl;
+		fset.tet = 1;
+		cout << "***** TDC Trigger : " << "Able" << " *****" << endl;
 	}
 	if (value == 1)
 	{
-		fset.tep2 = 0;	
-		cout << "***** Peak Sum OR Trigger : " << "Disable" << " *****" << endl;
+		fset.tet = 0;	
+		cout << "***** TDC Trigger : " << "Disable" << " *****" << endl;
 	}
 }
 
@@ -1851,16 +1851,32 @@ void FADC500gui::RunDAQ()
 	TString datafile = directory + saveFile;
 	saveFile = orisaveFile;
 
-	if (datafile.Length() >= 1 && tcbflag == 1)
+	if (datafile.Length() >= 1 && tcbflag == 1 && fset.daq_mode == 1)
 	{
 		frun.FADC500DAQRun(datafile, nEvent, nModule);
 		tcbflag = 0;
 		runnumber++;
 	}	
+
+	if (datafile.Length() >= 1 && tcbflag == 1 && fset.daq_mode == 2)
+	{
+		cout << "ADC mode has not been built yet." << endl;
+		cout << "TCB has been reset." << endl;
+		tcbflag = 0;
+	}	
+
+	if (datafile.Length() >= 1 && tcbflag == 1 && fset.daq_mode == 3)
+	{
+		cout << "Double mode has not been built yet." << endl;
+		cout << "TCB has been reset." << endl;
+		tcbflag = 0;
+	}	
+
 	if (datafile.Length() == 0)
 	{
 		cout << "Please save your directory and filename for data." << endl;
 	}
+
 	if (tcbflag == 0)
 	{
 		cout << "Please activate TCB first." << endl;

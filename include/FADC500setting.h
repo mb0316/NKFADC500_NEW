@@ -44,7 +44,7 @@ class FADC500setting
 		unsigned long ten;			//when 1 enables pulse count trigger 
 		unsigned long tew;			//when 1 enables pulse width trigger
 		unsigned long tep;			//when 1 enables peak sum trigger
-		unsigned long tep2;			//when 1 enables peak sum OR trigger
+		unsigned long tet;			//when 1 enables TDC trigger
 		unsigned long zerosup[6];		//zero-suppression, 0 = not use, 1 = use
 		unsigned long mthr;		//TCB multiplicity trigger threshold
 		unsigned long pscale=1;		//TCB trigger prescale

@@ -17,7 +17,7 @@ May. 1. 2017.
 
 void FADC500setting::FADC500ParSetting()
 {
-	unsigned long tmode = ten | (tew << 1) | (tep << 2) | (tep2 << 3);
+	unsigned long tmode = ten | (tew << 1) | (tep << 2) | (tet << 3);
 	unsigned long tenable = (ten_self) | (ten_pedestal << 1) | (ten_software << 2) | (ten_external << 3);
 	const int nch = 4;
 
